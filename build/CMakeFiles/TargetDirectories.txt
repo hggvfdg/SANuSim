@@ -1,3 +1,0 @@
-/home/jimmyma/Software/G4SOLAR/SANuSim/build/CMakeFiles/test.dir
-/home/jimmyma/Software/G4SOLAR/SANuSim/build/CMakeFiles/edit_cache.dir
-/home/jimmyma/Software/G4SOLAR/SANuSim/build/CMakeFiles/rebuild_cache.dir
