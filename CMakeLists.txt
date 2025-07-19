@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
-project(test)
+project(NuMain)
 
 find_package(Geant4 REQUIRED ui_all vis_all)
 
@@ -8,6 +8,6 @@ file(GLOB sources ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cc)
 file(GLOB headers ${CMAKE_CURRENT_SOURCE_DIR}/include/*.hh)
 
 # Add executable
-add_executable(test test.cc ${sources} ${headers})
-target_include_directories(test PRIVATE include)
-target_link_libraries(test ${Geant4_LIBRARIES})
+add_executable(NuMain NuMain.cc ${sources} ${headers})
+target_include_directories(NuMain PRIVATE include)
+target_link_libraries(NuMain ${Geant4_LIBRARIES})

@@ -1,6 +1,6 @@
 #include "NuPrimaryGeneratorAction.hh"
+#include "NuThreadLocalContainer.hh"
 
-#include "G4AutoLock.hh"
 #include "G4Event.hh"
 #include "G4ParticleGun.hh"
 #include "G4ParticleTable.hh"
@@ -9,13 +9,9 @@
 #include "G4RandomDirection.hh"
 #include "G4SystemOfUnits.hh"
 
-namespace{ G4Mutex DetLock = G4MUTEX_INITIALIZER; }
-
-std::vector<std::vector<G4double>> NuPrimaryGeneratorAction::iniParam;
-
 NuPrimaryGeneratorAction::NuPrimaryGeneratorAction()
 : G4VUserPrimaryGeneratorAction(),
-  fParticleGun(0)
+  fParticleGun(0), E_min(1*GeV), E_max(100*TeV)
 {
     G4int nofParticles = 1;
     fParticleGun  = new G4ParticleGun(nofParticles);
@@ -27,31 +23,22 @@ NuPrimaryGeneratorAction::NuPrimaryGeneratorAction()
 
 NuPrimaryGeneratorAction::~NuPrimaryGeneratorAction() { delete fParticleGun; }
 
-void NuPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
+void NuPrimaryGeneratorAction::GeneratePrimaries(G4Event* event)
 {
 #if true
 
-    G4ThreeVector position = G4RandomDirection()*2.5*695700*km;
-    fParticleGun->SetParticlePosition(position);
+    G4ThreeVector position_dir = G4RandomDirection();
+    fParticleGun->SetParticlePosition(position_dir*2.5*695700*km);
 
-    G4ThreeVector momentumDirection = G4RandomDirection();
-    if (position*momentumDirection >= 0) { momentumDirection = -momentumDirection; }
-    fParticleGun->SetParticleMomentumDirection(momentumDirection);
+    G4ThreeVector momentum_dir = G4RandomDirection();
+    if (position_dir*momentum_dir >= 0) { momentum_dir = -momentum_dir; }
+    fParticleGun->SetParticleMomentumDirection(momentum_dir);
     
-    fParticleGun->SetParticleEnergy(1*TeV);
+    G4double E_radio = E_max/E_min;
+    G4double KE = E_min * pow(E_radio, G4UniformRand());
+    fParticleGun->SetParticleEnergy(KE);
 
-    fParticleGun->GeneratePrimaryVertex(anEvent);
+    NuThreadLocalContainer::Instance()->SetPrimaryKE(KE);
 
-#else
-
-    G4AutoLock lock(&DetLock);
-    x_and_p = iniParam.back();
-    iniParam.pop_back();
-    lock.unlock();
-
-    fParticleGun->SetParticlePosition(G4ThreeVector(x_and_p[0], x_and_p[1], x_and_p[2]));
-    fParticleGun->SetParticleMomentum(G4ThreeVector(x_and_p[3], x_and_p[4], x_and_p[5]));
-    fParticleGun->GeneratePrimaryVertex(anEvent);
-
-#endif
+    fParticleGun->GeneratePrimaryVertex(event);
 }

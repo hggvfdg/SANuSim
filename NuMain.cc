@@ -3,8 +3,14 @@
 #include "NuPhysicsList.hh"
 #include "NuActionInitialization.hh"
 #include "G4UImanager.hh"
+#include <iostream>
 
-#include "G4LogicalVolumeStore.hh"
+#include <vector>
+#include "G4AutoLock.hh"
+#include "G4RootAnalysisReader.hh"
+#include "NuPrimaryGeneratorAction.hh"
+
+namespace{ G4Mutex DetLock = G4MUTEX_INITIALIZER; }
 
 int main() 
 {
@@ -24,9 +30,6 @@ int main()
 	UImanager->ApplyCommand("/tracking/verbose 0");
 
 	runManager->Initialize();
-
-	std::cout << "Pause\n";
-	std::cin.get();
 
 	int numberOfEvent = 100000;
     runManager->BeamOn(numberOfEvent);

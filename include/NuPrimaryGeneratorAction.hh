@@ -12,8 +12,6 @@ class NuPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
 {
 public:
 
-    static std::vector<std::vector<G4double>> iniParam;
-
     NuPrimaryGeneratorAction();
     ~NuPrimaryGeneratorAction();
 
@@ -21,6 +19,6 @@ public:
 
 private:
 
-    std::vector<G4double> x_and_p;
+    G4double E_min, E_max;
     G4ParticleGun* fParticleGun;
 };
