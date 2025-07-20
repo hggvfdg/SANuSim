@@ -16,7 +16,6 @@
 NuPhysicsList::NuPhysicsList() 
 : G4VModularPhysicsList()
 {
-    SetVerboseLevel(0);
     // EM physics
     RegisterPhysics(new G4EmStandardPhysics());  
 

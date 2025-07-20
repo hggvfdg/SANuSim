@@ -61,7 +61,7 @@ G4VPhysicalVolume* NuDetectorConstruction::Construct()
 
     auto analysisReader = G4RootAnalysisReader::Instance();
     analysisReader->SetVerboseLevel(0);
-    analysisReader->SetFileName("/home/jimmyma/Software/G4SOLAR/SANuSim/SunLayers.root");
+    analysisReader->SetFileName("/home/jimmyma/Software/SANuSim/SunLayers.root");
     G4int ntupleId = analysisReader->GetNtuple("LayerParameters");
 
     G4double InR, OutR, Rho, P, T;

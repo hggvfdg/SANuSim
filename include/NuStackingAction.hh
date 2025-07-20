@@ -1,6 +1,7 @@
 #pragma once
 
 #include "G4UserStackingAction.hh"
+#include "G4Types.hh"
 
 class NuStackingAction : public G4UserStackingAction
 {

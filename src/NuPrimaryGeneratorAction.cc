@@ -11,10 +11,9 @@
 
 NuPrimaryGeneratorAction::NuPrimaryGeneratorAction()
 : G4VUserPrimaryGeneratorAction(),
-  fParticleGun(0), E_min(1*GeV), E_max(100*TeV)
+  fParticleGun(0), E_min(0.1*GeV), E_max(100*TeV)
 {
-    G4int nofParticles = 1;
-    fParticleGun  = new G4ParticleGun(nofParticles);
+    fParticleGun  = new G4ParticleGun(1);
 
     G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
     G4ParticleDefinition* particle = particleTable->FindParticle("proton");
@@ -25,8 +24,6 @@ NuPrimaryGeneratorAction::~NuPrimaryGeneratorAction() { delete fParticleGun; }
 
 void NuPrimaryGeneratorAction::GeneratePrimaries(G4Event* event)
 {
-#if true
-
     G4ThreeVector position_dir = G4RandomDirection();
     fParticleGun->SetParticlePosition(position_dir*2.5*695700*km);
 
@@ -34,10 +31,8 @@ void NuPrimaryGeneratorAction::GeneratePrimaries(G4Event* event)
     if (position_dir*momentum_dir >= 0) { momentum_dir = -momentum_dir; }
     fParticleGun->SetParticleMomentumDirection(momentum_dir);
     
-    G4double E_radio = E_max/E_min;
-    G4double KE = E_min * pow(E_radio, G4UniformRand());
+    G4double KE = E_min * pow(E_max/E_min, G4UniformRand());
     fParticleGun->SetParticleEnergy(KE);
-
     NuThreadLocalContainer::Instance()->SetPrimaryKE(KE);
 
     fParticleGun->GeneratePrimaryVertex(event);

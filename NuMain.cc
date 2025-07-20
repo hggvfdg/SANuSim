@@ -5,17 +5,12 @@
 #include "G4UImanager.hh"
 #include <iostream>
 
-#include <vector>
-#include "G4AutoLock.hh"
-#include "G4RootAnalysisReader.hh"
-#include "NuPrimaryGeneratorAction.hh"
-
-namespace{ G4Mutex DetLock = G4MUTEX_INITIALIZER; }
-
 int main() 
 {
+	const auto t_start = std::chrono::high_resolution_clock::now();
+
     G4MTRunManager* runManager = new G4MTRunManager();
-    runManager->SetNumberOfThreads(14);
+    runManager->SetNumberOfThreads(15);
 
 	runManager->SetUserInitialization(new NuDetectorConstruction());
 	runManager->SetUserInitialization(new NuPhysicsList());
@@ -26,13 +21,18 @@ int main()
 	UImanager->ApplyCommand("/process/em/verbose 0");
 	UImanager->ApplyCommand("/material/verbose 0");
 	UImanager->ApplyCommand("/cuts/verbose 0");
-	UImanager->ApplyCommand("/run/verbose 0");
+	UImanager->ApplyCommand("/run/verbose 1");
+	UImanager->ApplyCommand("/event/verbose 0");
 	UImanager->ApplyCommand("/tracking/verbose 0");
 
 	runManager->Initialize();
 
-	int numberOfEvent = 100000;
+	int numberOfEvent = 60000;
     runManager->BeamOn(numberOfEvent);
 
 	delete runManager;
+
+	const auto t_end = std::chrono::high_resolution_clock::now();
+	const std::chrono::duration<double, std::milli> t_total = t_end - t_start;
+	std::cout << "ToTal time: " << t_total.count()/1000 << " s\n";
 }
