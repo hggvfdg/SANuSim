@@ -9,6 +9,7 @@
 #include "G4IonPhysics.hh"
 #include "G4NeutronTrackingCut.hh"
 #include "G4RadioactiveDecayPhysics.hh"
+#include "G4HadronPhysicsCRMC.hh"
 #include "G4ProductionCutsTable.hh"
 #include "G4SystemOfUnits.hh"
 
@@ -42,12 +43,17 @@ NuPhysicsList::NuPhysicsList()
 
     // Radioactive decay
     RegisterPhysics(new G4RadioactiveDecayPhysics());
+
+    // CRMC hadronic models
+    G4HadronPhysicsCRMC* crmc = new G4HadronPhysicsCRMC(6);
+    crmc->SetEnergyThreshold(100*TeV);
+    RegisterPhysics(crmc);
 }
 
 void NuPhysicsList::SetCuts()
 {
   G4VUserPhysicsList::SetCuts();
-  G4ProductionCutsTable::GetProductionCutsTable()->SetEnergyRange(0.001*GeV,100.*TeV);
+  G4ProductionCutsTable::GetProductionCutsTable()->SetEnergyRange(0.01*GeV,10.*PeV);
 }
 
 

@@ -8,10 +8,11 @@
 #include "G4ThreeVector.hh"
 #include "G4RandomDirection.hh"
 #include "G4SystemOfUnits.hh"
+#include "G4AnalysisManager.hh"
 
 NuPrimaryGeneratorAction::NuPrimaryGeneratorAction()
 : G4VUserPrimaryGeneratorAction(),
-  fParticleGun(0), E_min(0.1*GeV), E_max(100*TeV)
+  fParticleGun(0), E_min(1*GeV), E_max(10*PeV)
 {
     fParticleGun  = new G4ParticleGun(1);
 
@@ -29,11 +30,19 @@ void NuPrimaryGeneratorAction::GeneratePrimaries(G4Event* event)
 
     G4ThreeVector momentum_dir = G4RandomDirection();
     if (position_dir*momentum_dir >= 0) { momentum_dir = -momentum_dir; }
+    while ((-position_dir*momentum_dir)<G4UniformRand())
+    {
+        momentum_dir = G4RandomDirection();
+        if (position_dir*momentum_dir >= 0) { momentum_dir = -momentum_dir; }
+    }
     fParticleGun->SetParticleMomentumDirection(momentum_dir);
     
     G4double KE = E_min * pow(E_max/E_min, G4UniformRand());
     fParticleGun->SetParticleEnergy(KE);
     NuThreadLocalContainer::Instance()->SetPrimaryKE(KE);
+    auto analysisManager = G4AnalysisManager::Instance();
+    analysisManager->FillNtupleDColumn(6, 0, KE);
+    analysisManager->AddNtupleRow(6);
 
     fParticleGun->GeneratePrimaryVertex(event);
 }

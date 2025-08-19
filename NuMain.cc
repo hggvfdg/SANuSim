@@ -1,3 +1,4 @@
+#include "Randomize.hh"
 #include "G4MTRunManager.hh"
 #include "NuDetectorConstruction.hh"
 #include "NuPhysicsList.hh"
@@ -8,9 +9,11 @@
 int main() 
 {
 	const auto t_start = std::chrono::high_resolution_clock::now();
+	G4Random::setTheEngine(new CLHEP::RanluxEngine);
+  	G4Random::setTheSeed(time(0),3);
 
     G4MTRunManager* runManager = new G4MTRunManager();
-    runManager->SetNumberOfThreads(15);
+    runManager->SetNumberOfThreads(14);
 
 	runManager->SetUserInitialization(new NuDetectorConstruction());
 	runManager->SetUserInitialization(new NuPhysicsList());
@@ -27,7 +30,7 @@ int main()
 
 	runManager->Initialize();
 
-	int numberOfEvent = 60000;
+	int numberOfEvent = 70000;
     runManager->BeamOn(numberOfEvent);
 
 	delete runManager;

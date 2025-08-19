@@ -21,7 +21,11 @@ void NuRunAction::BeginOfRunAction(const G4Run*)
         analysisManager->CreateNtupleDColumn(ntupleID, "Primary_KE_MeV");
         analysisManager->FinishNtuple(ntupleID);
     }
-    // Note: Ntuple ID ranging for 0 to 5 are, nu_mu, nu_mu_bar, nu_e, nu_e_bar, nu_tau and nu_tau_bar respectively
+
+    ntupleID = analysisManager->CreateNtuple("proton", "proton");
+    analysisManager->CreateNtupleDColumn(ntupleID, "KE_MeV");
+    analysisManager->FinishNtuple(ntupleID);
+    // Note: Ntuple ID ranging for 0 to 6 are, nu_mu, nu_mu_bar, nu_e, nu_e_bar, nu_tau, nu_tau_bar and proton respectively
 
     NuThreadLocalContainer::Instance(); // Create an instance of the NuThreadLocalContainer for the this thread
 }
